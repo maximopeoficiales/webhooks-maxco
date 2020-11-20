@@ -1,5 +1,4 @@
 <?php
-
 // function wmHome()
 // {
 //      return ["msg" => "fasdfasdf"];
@@ -13,12 +12,33 @@
 //      ));
 // });
 
-add_action('woocommerce_created_customer', 'action_woocommerce_created_customer', 10, 3);
-/* webhook de registro de cliente */
-function action_woocommerce_created_customer($customer_id, $new_customer_data, $password_generated)
+/* hook de registro de cliente */
+add_action('user_register', 'wmUser_register', 10, 3);
+function wmUser_register($user_id)
 {
+     $user = get_user_by('id', $user_id);
      global $wpdb;
-     $sql = "INSERT INTO wp_userssap (cd_cli,cod,date_created) VALUES ($customer_id,0,%s)";
-     $wpdb->query($wpdb->prepare($sql, $new_customer_data->date_created));
+     $sql = "INSERT INTO wp_userssap (user_id,cod,date_created) VALUES ($user_id,0,%s)";
+     $wpdb->query($wpdb->prepare($sql, $user->user_registered));
      $wpdb->flush();
 };
+
+// hook de actualizacion de clientes
+add_action('profile_update', 'wmUser_update', 10, 3);
+function wmUser_update($user_id, $old_user_data)
+{
+     global $wpdb;
+     $sql = "UPDATE wp_userssap SET cod = 1 WHERE user_id =$user_id";
+     $wpdb->query($sql);
+     $wpdb->flush();
+}
+
+//opcionalmente si se elimina usuario
+// add_action('delete_user', 'wmDelete_user');
+// function wmDelete_user($user_id)
+// {
+//      global $wpdb;
+//      $sql = "DELETE FROM wp_userssap FROM user_id = $user_id";
+//      $wpdb->query($sql);
+//      $wpdb->flush();
+// }
