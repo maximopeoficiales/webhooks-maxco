@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Lima');
 // function wmHome()
 // {
 //      return ["msg" => "fasdfasdf"];
@@ -16,10 +17,10 @@
 add_action('user_register', 'wmUser_register', 10, 3);
 function wmUser_register($user_id)
 {
-     $user = get_user_by('id', $user_id);
      global $wpdb;
+     $fecha_actual = date("Y-m-d H:i:s");
      $sql = "INSERT INTO wp_userssap (user_id,cod,date_created) VALUES ($user_id,0,%s)";
-     $wpdb->query($wpdb->prepare($sql, $user->user_registered));
+     $wpdb->query($wpdb->prepare($sql, $fecha_actual));
      $wpdb->flush();
 };
 
@@ -34,11 +35,11 @@ function wmUser_update($user_id, $old_user_data)
 }
 
 //opcionalmente si se elimina usuario
-// add_action('delete_user', 'wmDelete_user');
-// function wmDelete_user($user_id)
-// {
-//      global $wpdb;
-//      $sql = "DELETE FROM wp_userssap FROM user_id = $user_id";
-//      $wpdb->query($sql);
-//      $wpdb->flush();
-// }
+add_action('delete_user', 'wmDelete_user');
+function wmDelete_user($user_id)
+{
+     global $wpdb;
+     $sql = "DELETE FROM wp_userssap WHERE user_id = $user_id";
+     $wpdb->query($sql);
+     $wpdb->flush();
+}
